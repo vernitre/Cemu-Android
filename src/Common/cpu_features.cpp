@@ -27,9 +27,23 @@ inline void cpuidex(int cpuInfo[4], int functionId, int subFunctionId) {
 }
 #endif
 
+#if defined(__aarch64__)
+#if BOOST_OS_LINUX
+#include "cpuid.h"
+#endif // BOOST_OS_LINUX
+#endif // defined(__aarch64__)
 
 CPUFeaturesImpl::CPUFeaturesImpl()
 {
+#if defined(__aarch64__)
+#if BOOST_OS_LINUX
+#if __ANDROID__
+	m_cpuBrandName = cpuid::getCpuBrandNameAndroid().value_or(cpuid::getCpuBrandNameLinux());
+#else
+	m_cpuBrandName = cpuid::getCpuBrandNameLinux();
+#endif
+#endif
+#endif
 #if defined(ARCH_X86_64)
 	int cpuInfo[4];
 	cpuid(cpuInfo, 0x80000001);
@@ -47,19 +61,21 @@ CPUFeaturesImpl::CPUFeaturesImpl()
 	x86.invariant_tsc = ((cpuInfo[3] >> 8) & 1);
 	// get CPU brand name
 	uint32_t nExIds, i = 0;
-	memset(m_cpuBrandName, 0, sizeof(m_cpuBrandName));
+	char cpuBrandName[0x40]{ 0 };
+	memset(cpuBrandName, 0, sizeof(cpuBrandName));
 	cpuid(cpuInfo, 0x80000000);
 	nExIds = (uint32_t)cpuInfo[0];
 	for (uint32_t i = 0x80000000; i <= nExIds; ++i)
 	{
 		cpuid(cpuInfo, i);
 		if (i == 0x80000002)
-			memcpy(m_cpuBrandName, cpuInfo, sizeof(cpuInfo));
+			memcpy(cpuBrandName, cpuInfo, sizeof(cpuInfo));
 		else if (i == 0x80000003)
-			memcpy(m_cpuBrandName + 16, cpuInfo, sizeof(cpuInfo));
+			memcpy(cpuBrandName + 16, cpuInfo, sizeof(cpuInfo));
 		else if (i == 0x80000004)
-			memcpy(m_cpuBrandName + 32, cpuInfo, sizeof(cpuInfo));
+			memcpy(cpuBrandName + 32, cpuInfo, sizeof(cpuInfo));
 	}
+	m_cpuBrandName = cpuBrandName;
 #endif
 }
 

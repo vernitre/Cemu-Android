@@ -248,6 +248,7 @@ add_subdirectory("dependencies/ih264d" EXCLUDE_FROM_ALL)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64)|(AARCH64)")
 	add_subdirectory("dependencies/xbyak_aarch64" EXCLUDE_FROM_ALL)
+	add_subdirectory("dependencies/cpuid" EXCLUDE_FROM_ALL)
 endif()
 
 find_package(ZArchive)

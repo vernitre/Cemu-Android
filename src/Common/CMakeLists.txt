@@ -85,6 +85,9 @@ endif()
 if (UNIX AND NOT APPLE AND NOT ANDROID)
 	target_link_libraries(CemuCommon PRIVATE X11::X11 X11::Xrender X11::Xutil)
 endif()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(aarch64)|(AARCH64)")
+  target_link_libraries(CemuCommon PRIVATE cpuid)
+endif()
 
 # PUBLIC because:
 # - boost/predef/os.h is included in platform.h
