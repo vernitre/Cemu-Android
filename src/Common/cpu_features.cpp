@@ -27,23 +27,8 @@ inline void cpuidex(int cpuInfo[4], int functionId, int subFunctionId) {
 }
 #endif
 
-#if defined(__aarch64__)
-#if BOOST_OS_LINUX
-#include "cpuid.h"
-#endif // BOOST_OS_LINUX
-#endif // defined(__aarch64__)
-
 CPUFeaturesImpl::CPUFeaturesImpl()
 {
-#if defined(__aarch64__)
-#if BOOST_OS_LINUX
-#if __ANDROID__
-	m_cpuBrandName = cpuid::getCpuBrandNameAndroid().value_or(cpuid::getCpuBrandNameLinux());
-#else
-	m_cpuBrandName = cpuid::getCpuBrandNameLinux();
-#endif
-#endif
-#endif
 #if defined(ARCH_X86_64)
 	int cpuInfo[4];
 	cpuid(cpuInfo, 0x80000001);
