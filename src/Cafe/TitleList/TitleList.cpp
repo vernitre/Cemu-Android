@@ -222,12 +222,7 @@ void CafeTitleList::AddTitleFromPath(fs::path path)
 	if (path.has_extension() && boost::iequals(_pathToUtf8(path.extension()), ".wua"))
 	{
 		ZArchiveReader* zar = nullptr;
-#if __ANDROID__
-		if(FilesystemAndroid::isContentUri(path))
-			zar = ZArchiveReader::OpenFromStream(std::make_unique<ContentUriStream>(path));
-		else
-#endif // __ANDROID__
-			zar = ZArchiveReader::OpenFromFile(path);
+		zar = ZArchiveReader::OpenFromFile(path);
 		if (!zar)
 		{
 			cemuLog_log(LogType::Force, "Found {} but it is not a valid Wii U archive file", _pathToUtf8(path));
