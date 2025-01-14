@@ -16,7 +16,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.GH_PAT }}
           submodules: "recursive"
           fetch-depth: 0
 
